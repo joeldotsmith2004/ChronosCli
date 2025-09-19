@@ -1,6 +1,9 @@
 using Spectre.Console;
 using Spectre.Console.Cli;
 using Backend.Core.Schemas;
+using System.Text.Json;
+using System.Text;
+
 
 public class GetEntries : AsyncCommand<GetEntries.Settings>
 {
@@ -27,6 +30,13 @@ public class GetEntries : AsyncCommand<GetEntries.Settings>
 
 public class AddEntry : AsyncCommand<AddEntry.Settings>
 {
+
+    private JsonSerializerOptions options = new JsonSerializerOptions
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.Never
+    };
+
     public class Settings : CommandSettings
     {
 
@@ -42,26 +52,29 @@ public class AddEntry : AsyncCommand<AddEntry.Settings>
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        var payload = new TimeEntry
+        var payload = new TimeEntryCreate
         {
             UserId = 166,
             Date = DateOnly.FromDateTime(DateTime.Now),
             TaskId = settings.TaskId,
-            SubTaskId = null,
+            SubTaskId = (int?)null,
             Hours = settings.Hours,
             Comment = settings.Message
         };
-        var json = System.Text.Json.JsonSerializer.Serialize(payload);
-        var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+        var json = System.Text.Json.JsonSerializer.Serialize(payload, options);
+        var content = new StringContent(json, new UTF8Encoding(false), "application/json");
         var res = await ApiService.Instance.PostRoute("/time-entry", content);
+
         if (res.Success)
         {
-            AnsiConsole.MarkupLine($"[green]Response:[/] {Markup.Escape(res.Content)}");
+            AnsiConsole.MarkupLine($"[green]Success:[/] {Markup.Escape(res.Content)}");
             return 1;
         }
         else
         {
             AnsiConsole.MarkupLine($"[red]Error {res.StatusCode}[/]");
+            AnsiConsole.MarkupLine($"[red]Error {res.Content}[/]");
             return 0;
         }
     }

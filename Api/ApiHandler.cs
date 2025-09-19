@@ -1,8 +1,6 @@
-using System.CommandLine;
 using Spectre.Console;
 using System.Net.Http.Headers;
 using Microsoft.Identity.Client;
-using System.Threading.Tasks;
 using System.Net;
 
 
@@ -12,6 +10,7 @@ public class ApiHandler
     public AzureConfig Config;
     private TokenCache TokenCache;
     private IPublicClientApplication App;
+
 
     private ApiHandler(HttpClient client, AzureConfig config, TokenCache tokenCache, IPublicClientApplication app)
     {
@@ -46,6 +45,7 @@ public class ApiHandler
             var accounts = await App.GetAccountsAsync();
             var result = await App.AcquireTokenSilent(Config.Scopes, accounts.FirstOrDefault()).ExecuteAsync();
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", result.AccessToken);
+
         }
         catch
         {
@@ -114,7 +114,28 @@ public class ApiHandler
         };
     }
 
+
+
+    async Task PrintRequestAsync(HttpRequestMessage request)
+    {
+        Console.WriteLine($"{request.Method} {request.RequestUri}");
+
+        foreach (var header in request.Headers)
+            Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
+
+        if (request.Content != null)
+        {
+            foreach (var header in request.Content.Headers)
+                Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
+
+            var content = await request.Content.ReadAsStringAsync();
+            Console.WriteLine();
+            Console.WriteLine(content);
+        }
+    }
+
 }
+
 
 public class ApiResult
 {

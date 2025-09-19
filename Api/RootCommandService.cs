@@ -20,6 +20,8 @@ public static class RootCommandService
               .WithDescription("Gets Assigned Purchase Orders");
             config.AddCommand<GetProjects>("projects")
               .WithDescription("Gets Assigned Projects");
+            config.AddCommand<GetTasks>("tasks")
+              .WithDescription("Gets Assigned Tasks");
         });
     }
 }

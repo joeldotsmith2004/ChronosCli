@@ -3,7 +3,6 @@ namespace Backend.Core.Schemas;
 public class TimeEntry : SchemaBase
 {
     public required int UserId { get; set; }
-    public User User { get; set; } = null!;
 
     public required int TaskId { get; set; }
     public Task_ Task { get; set; } = null!;
@@ -30,3 +29,15 @@ public class TimeEntry : SchemaBase
 
     public bool IsEditable => !HasTimesheet && !HasPayRun;
 }
+
+public class TimeEntryCreate
+{
+    public required int UserId { get; set; }
+    public required int TaskId { get; set; }
+    public required int? SubTaskId { get; set; }
+    public required DateOnly Date { get; set; }
+    public required float Hours { get; set; }
+    public required string? Comment { get; set; }
+}
+
+
