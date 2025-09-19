@@ -1,69 +1,72 @@
-using System.CommandLine;
 using Spectre.Console;
+using Spectre.Console.Cli;
 using System.Text.Json;
 using Backend.Core.Schemas;
 
-
-public class ProjectsCommands
+public class GetProjects : AsyncCommand<GetProjects.Settings>
 {
-
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
 
-    public void AddProjectsCommands()
+    public class Settings : CommandSettings
     {
-        GetProjects();
-        GetPos();
     }
 
-    public void GetProjects()
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        var cmd = new Command("projects", "Returns Assigned Projects");
-        cmd.SetHandler(async () =>
+        var res = await ApiService.Instance.GetRoute("/task-user/166"); // TODO remove hard coded ID maybe store in config
+        if (res.Success)
         {
-            var res = await ApiService.Instance.GetRoute("/task-user/166"); // TODO remove hard coded ID maybe store in config
-            if (res.Success)
+            var projects = JsonSerializer.Deserialize<List<ProjectAssignedDto>>(res.Content, JsonOptions);
+            if (projects == null) return 0;
+            foreach (var project in projects)
             {
-                var projects = JsonSerializer.Deserialize<List<ProjectAssignedDto>>(res.Content, JsonOptions);
-                if (projects == null) return;
-                foreach (var project in projects)
-                {
-                    AnsiConsole.MarkupLine($"[green]{Markup.Escape($"[{project.Id}]")}[/] {Markup.Escape(project.Name)}");
-                }
+                AnsiConsole.MarkupLine($"[green]{Markup.Escape($"[{project.Id}]")}[/] {Markup.Escape(project.Name)}");
             }
-            else
-            {
-                AnsiConsole.MarkupLine($"[red]Error {res.StatusCode}[/]");
-            }
-        });
-        RootCommandService.Instance.AddCommand(cmd);
+            return 1;
+        }
+        else
+        {
+            AnsiConsole.MarkupLine($"[red]Error {res.StatusCode}[/]");
+            return 0;
+        }
+    }
+}
+
+
+public class GetPos : AsyncCommand<GetPos.Settings>
+{
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
+    public class Settings : CommandSettings
+    {
     }
 
-    public void GetPos()
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        var cmd = new Command("pos", "Returns Assigned Purchase Orders");
-        cmd.SetHandler(async () =>
+        var res = await ApiService.Instance.GetRoute("/task-user/166"); // TODO remove hard coded ID maybe store in config
+        if (res.Success)
         {
-            var res = await ApiService.Instance.GetRoute("/task-user/166"); // TODO remove hard coded ID maybe store in config
-            if (res.Success)
+            var projects = JsonSerializer.Deserialize<List<ProjectAssignedDto>>(res.Content, JsonOptions);
+            if (projects == null) return 0;
+            foreach (var project in projects)
             {
-                var projects = JsonSerializer.Deserialize<List<ProjectAssignedDto>>(res.Content, JsonOptions);
-                if (projects == null) return;
-                foreach (var project in projects)
+                foreach (var po in project.PurchaseOrders)
                 {
-                    foreach (var po in project.PurchaseOrders)
-                    {
-                        AnsiConsole.MarkupLine($"[yellow]{Markup.Escape($"[{po.Id}]")}[/] {Markup.Escape(po.Name)}");
-                    }
+                    AnsiConsole.MarkupLine($"[yellow]{Markup.Escape($"[{po.Id}]")}[/] {Markup.Escape(po.Name)}");
                 }
             }
-            else
-            {
-                AnsiConsole.MarkupLine($"[red]Error {res.StatusCode}[/]");
-            }
-        });
-        RootCommandService.Instance.AddCommand(cmd);
+            return 1;
+        }
+        else
+        {
+            AnsiConsole.MarkupLine($"[red]Error {res.StatusCode}[/]");
+            return 0;
+        }
     }
 }

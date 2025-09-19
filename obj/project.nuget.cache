@@ -1,16 +1,16 @@
 {
   "version": 2,
-  "dgSpecHash": "7kjj6JGbXkQ=",
+  "dgSpecHash": "4SgxVFURjwE=",
   "success": true,
   "projectFilePath": "/Users/joelsmith/main/ChronosCli/ChronosCli.csproj",
   "expectedPackageFiles": [
     "/Users/joelsmith/.nuget/packages/microsoft.identity.client/4.77.0/microsoft.identity.client.4.77.0.nupkg.sha512",
     "/Users/joelsmith/.nuget/packages/microsoft.identity.client.extensions.msal/4.77.0/microsoft.identity.client.extensions.msal.4.77.0.nupkg.sha512",
     "/Users/joelsmith/.nuget/packages/microsoft.identitymodel.abstractions/8.14.0/microsoft.identitymodel.abstractions.8.14.0.nupkg.sha512",
-    "/Users/joelsmith/.nuget/packages/spectre.console/0.50.0/spectre.console.0.50.0.nupkg.sha512",
+    "/Users/joelsmith/.nuget/packages/spectre.console/0.51.1/spectre.console.0.51.1.nupkg.sha512",
+    "/Users/joelsmith/.nuget/packages/spectre.console.cli/0.51.1/spectre.console.cli.0.51.1.nupkg.sha512",
     "/Users/joelsmith/.nuget/packages/system.commandline/2.0.0-beta4.22272.1/system.commandline.2.0.0-beta4.22272.1.nupkg.sha512",
     "/Users/joelsmith/.nuget/packages/system.diagnostics.diagnosticsource/6.0.1/system.diagnostics.diagnosticsource.6.0.1.nupkg.sha512",
-    "/Users/joelsmith/.nuget/packages/system.memory/4.6.3/system.memory.4.6.3.nupkg.sha512",
     "/Users/joelsmith/.nuget/packages/system.runtime.compilerservices.unsafe/6.0.0/system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
     "/Users/joelsmith/.nuget/packages/system.security.cryptography.protecteddata/4.5.0/system.security.cryptography.protecteddata.4.5.0.nupkg.sha512"
   ],

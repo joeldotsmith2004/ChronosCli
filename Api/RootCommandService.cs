@@ -1,28 +1,25 @@
-using System.CommandLine;
-using Spectre.Console;
-using System.Net.Http.Headers;
-using Microsoft.Identity.Client;
-using System.Threading.Tasks;
-using System.Net;
+using Spectre.Console.Cli;
 
 public static class RootCommandService
 {
-    public static RootCommand Instance { get; private set; } = null!;
+    public static CommandApp Instance { get; private set; } = new CommandApp();
 
     public static void Init()
     {
-        Instance = new RootCommand("CLI for Enco Chronos");
-        AddCommands();
-    }
-
-
-    public static void AddCommands()
-    {
-        new UserCommands().AddUserCommands();
-        new GeneralCommands().AddGeneralCommands();
-        new ProjectsCommands().AddProjectsCommands();
-        new HoursCommands().AddHoursCommands();
-
-        return;
+        Instance.Configure(config =>
+        {
+            config.AddCommand<UserCommand>("me")
+              .WithDescription("Gets User Information");
+            config.AddCommand<AppSettings>("app-settings")
+              .WithDescription("Gets Chronos App Settings");
+            config.AddCommand<AddEntry>("add")
+              .WithDescription("Adds a time entry");
+            config.AddCommand<GetEntries>("entries")
+              .WithDescription("Gets this weeks time entries");
+            config.AddCommand<GetPos>("pos")
+              .WithDescription("Gets Assigned Purchase Orders");
+            config.AddCommand<GetProjects>("projects")
+              .WithDescription("Gets Assigned Projects");
+        });
     }
 }

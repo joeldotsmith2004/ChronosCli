@@ -1,14 +1,15 @@
 using Spectre.Console;
 using Spectre.Console.Cli;
 
-public class UserCommand : AsyncCommand<UserCommand.Settings>
+public class AppSettings : AsyncCommand<AppSettings.Settings>
 {
     public class Settings : CommandSettings
     {
     }
+
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        var res = await ApiService.Instance.GetRoute("/users/me");
+        var res = await ApiService.Instance.GetRoute("/app-settings/basic");
         if (res.Success)
         {
             AnsiConsole.MarkupLine($"[green]Response:[/] {Markup.Escape(res.Content)}");
