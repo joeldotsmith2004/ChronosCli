@@ -12,6 +12,7 @@
           "Microsoft.Identity.Client.Extensions.Msal": "4.77.0",
           "Spectre.Console": "0.51.1",
           "Spectre.Console.Cli": "0.51.1",
+          "Spectre.Console.Json": "0.51.1",
           "System.CommandLine": "2.0.0-beta4.22272.1"
         },
         "runtime": {
@@ -98,6 +99,17 @@
           },
           "lib/net8.0/zh-Hans/Spectre.Console.Cli.resources.dll": {
             "locale": "zh-Hans"
+          }
+        }
+      },
+      "Spectre.Console.Json/0.51.1": {
+        "dependencies": {
+          "Spectre.Console": "0.51.1"
+        },
+        "runtime": {
+          "lib/net8.0/Spectre.Console.Json.dll": {
+            "assemblyVersion": "0.0.0.0",
+            "fileVersion": "0.51.1.0"
           }
         }
       },
@@ -214,6 +226,13 @@
       "sha512": "sha512-LqJjjug5f8ipFFzhwBaQHMXt8+uuJAxu3dsyAxF+Jyva9yHW0P3iP6s1NpwVqt0Yk11n6/f9qipyiEn0zBKBiQ==",
       "path": "spectre.console.cli/0.51.1",
       "hashPath": "spectre.console.cli.0.51.1.nupkg.sha512"
+    },
+    "Spectre.Console.Json/0.51.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-gq/tDLlxpontGGfInJ3fiZUzLrzmUuhaDzA/36z5sq+Yk+ZdgbXyymrXgg73pm/ewsW4ViNxPr/FSgw8tMIzLw==",
+      "path": "spectre.console.json/0.51.1",
+      "hashPath": "spectre.console.json.0.51.1.nupkg.sha512"
     },
     "System.CommandLine/2.0.0-beta4.22272.1": {
       "type": "package",

@@ -2,12 +2,19 @@ using Spectre.Console;
 using System.Net.Http.Headers;
 using Microsoft.Identity.Client;
 using System.Net;
-
+using System.Text.Json;
 
 public class ApiHandler
 {
     public HttpClient Client;
     public AzureConfig Config;
+    public JsonSerializerOptions options = new JsonSerializerOptions
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.Never,
+        PropertyNameCaseInsensitive = true
+    };
+
     private TokenCache TokenCache;
     private IPublicClientApplication App;
 
@@ -71,6 +78,19 @@ public class ApiHandler
         };
     }
 
+    public async Task<ApiResult> PutRoute(string route, HttpContent content)
+    {
+        var res = await Client.PutAsync($"{Config.ApiUrl}api{route}", content);
+        var resContent = await res.Content.ReadAsStringAsync();
+
+        return new ApiResult
+        {
+            Success = res.IsSuccessStatusCode,
+            Content = resContent,
+            StatusCode = res.StatusCode
+        };
+    }
+
     public async Task<ApiResult> PostRoute(string route, HttpContent content)
     {
         var res = await Client.PostAsync($"{Config.ApiUrl}api{route}", content);
@@ -113,27 +133,6 @@ public class ApiHandler
             StatusCode = res.StatusCode
         };
     }
-
-
-
-    async Task PrintRequestAsync(HttpRequestMessage request)
-    {
-        Console.WriteLine($"{request.Method} {request.RequestUri}");
-
-        foreach (var header in request.Headers)
-            Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
-
-        if (request.Content != null)
-        {
-            foreach (var header in request.Content.Headers)
-                Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
-
-            var content = await request.Content.ReadAsStringAsync();
-            Console.WriteLine();
-            Console.WriteLine(content);
-        }
-    }
-
 }
 
 

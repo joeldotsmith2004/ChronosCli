@@ -110,6 +110,22 @@
           }
         }
       },
+      "Spectre.Console.Json/0.51.1": {
+        "type": "package",
+        "dependencies": {
+          "Spectre.Console": "0.51.1"
+        },
+        "compile": {
+          "lib/net8.0/Spectre.Console.Json.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/Spectre.Console.Json.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "System.CommandLine/2.0.0-beta4.22272.1": {
         "type": "package",
         "compile": {
@@ -352,6 +368,25 @@
         "spectre.console.cli.nuspec"
       ]
     },
+    "Spectre.Console.Json/0.51.1": {
+      "sha512": "gq/tDLlxpontGGfInJ3fiZUzLrzmUuhaDzA/36z5sq+Yk+ZdgbXyymrXgg73pm/ewsW4ViNxPr/FSgw8tMIzLw==",
+      "type": "package",
+      "path": "spectre.console.json/0.51.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net8.0/Spectre.Console.Json.dll",
+        "lib/net8.0/Spectre.Console.Json.xml",
+        "lib/net9.0/Spectre.Console.Json.dll",
+        "lib/net9.0/Spectre.Console.Json.xml",
+        "lib/netstandard2.0/Spectre.Console.Json.dll",
+        "lib/netstandard2.0/Spectre.Console.Json.xml",
+        "logo.png",
+        "spectre.console.json.0.51.1.nupkg.sha512",
+        "spectre.console.json.nuspec"
+      ]
+    },
     "System.CommandLine/2.0.0-beta4.22272.1": {
       "sha512": "1uqED/q2H0kKoLJ4+hI2iPSBSEdTuhfCYADeJrAqERmiGQ2NNacYKRNEQ+gFbU4glgVyK8rxI+ZOe1onEtr/Pg==",
       "type": "package",
@@ -494,6 +529,7 @@
       "Microsoft.Identity.Client.Extensions.Msal >= 4.77.0",
       "Spectre.Console >= 0.51.1",
       "Spectre.Console.Cli >= 0.51.1",
+      "Spectre.Console.Json >= 0.51.1",
       "System.CommandLine >= 2.0.0-beta4.22272.1"
     ]
   },
@@ -553,6 +589,10 @@
             "version": "[0.51.1, )"
           },
           "Spectre.Console.Cli": {
+            "target": "Package",
+            "version": "[0.51.1, )"
+          },
+          "Spectre.Console.Json": {
             "target": "Package",
             "version": "[0.51.1, )"
           },

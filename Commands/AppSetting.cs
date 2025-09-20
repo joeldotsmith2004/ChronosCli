@@ -1,5 +1,6 @@
 using Spectre.Console;
 using Spectre.Console.Cli;
+using Spectre.Console.Json;
 
 public class AppSettings : AsyncCommand<AppSettings.Settings>
 {
@@ -12,7 +13,8 @@ public class AppSettings : AsyncCommand<AppSettings.Settings>
         var res = await ApiService.Instance.GetRoute("/app-settings/basic");
         if (res.Success)
         {
-            AnsiConsole.MarkupLine($"[green]Response:[/] {Markup.Escape(res.Content)}");
+
+            AnsiConsole.Write(new JsonText(res.Content));
             return 1;
         }
         else

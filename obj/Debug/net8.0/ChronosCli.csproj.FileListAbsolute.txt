@@ -79,3 +79,4 @@
 /Users/joelsmith/main/ChronosCli/bin/Debug/net8.0/ru/Spectre.Console.Cli.resources.dll
 /Users/joelsmith/main/ChronosCli/bin/Debug/net8.0/sv/Spectre.Console.Cli.resources.dll
 /Users/joelsmith/main/ChronosCli/bin/Debug/net8.0/zh-Hans/Spectre.Console.Cli.resources.dll
+/Users/joelsmith/main/ChronosCli/bin/Debug/net8.0/Spectre.Console.Json.dll
