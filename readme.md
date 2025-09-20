@@ -58,7 +58,7 @@ If you encounter installation errors, try:
 
 ```bash
 # Uninstall any existing version
-dotnet tool uninstall --global chronos
+dotnet tool uninstall --global ChronosCli
 
 # Reinstall
 dotnet tool install --global --add-source ./nupkg ChronosCli
