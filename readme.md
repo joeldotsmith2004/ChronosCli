@@ -41,7 +41,7 @@ chronos <command> [options]
 
 ## Configuration
 
-Chronos CLI stores configuration and authentication data in your user profile directory:
+Chronos CLI stores configuration data in your user profile directory:
 
 - **Windows**: `%USERPROFILE%\.chronos`
 - **macOS/Linux**: `~/.chronos`
