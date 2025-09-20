@@ -18,7 +18,10 @@ public class GetEntries : AsyncCommand<GetEntries.Settings>
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        var res = await ApiService.Instance.GetRoute($"/time-entry/166?minDate={settings.StartDate.ToString("yyyy-MM-dd")}&maxDate={settings.EndDate.ToString("yyyy-MM-dd")}");
+        var user = await UserConfig.LoadAsync();
+        if (user == null) return 0;
+
+        var res = await ApiService.Instance.GetRoute($"/time-entry/{user.Id}?minDate={settings.StartDate.ToString("yyyy-MM-dd")}&maxDate={settings.EndDate.ToString("yyyy-MM-dd")}");
         if (res.Success)
         {
             var entries = JsonSerializer.Deserialize<List<TimeEntryGet>>(res.Content, ApiService.Instance.options);
@@ -53,7 +56,7 @@ public class AddEntry : AsyncCommand<AddEntry.Settings>
         public int TaskId { get; set; }
 
         [CommandArgument(1, "[Hours]")]
-        public float Hours { get; set; } = 8; // user default hours to be set
+        public float? Hours { get; set; } // defaults to user default hours
 
         [CommandArgument(2, "[Message]")]
         public string? Message { get; set; } = null;
@@ -61,13 +64,17 @@ public class AddEntry : AsyncCommand<AddEntry.Settings>
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
+
+        var user = await UserConfig.LoadAsync();
+        if (user == null) return 0;
+
         var payload = new TimeEntryCreate
         {
-            UserId = 166,
+            UserId = user.Id,
             Date = DateOnly.FromDateTime(DateTime.Now),
             TaskId = settings.TaskId,
             SubTaskId = (int?)null,
-            Hours = settings.Hours,
+            Hours = settings.Hours ?? user.DefaultEntryHours,
             Comment = settings.Message
         };
 

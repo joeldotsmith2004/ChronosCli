@@ -41,7 +41,6 @@ public class ApiHandler
             .Build();
 
         tokenCache.CacheHelper.RegisterCache(app.UserTokenCache);
-
         return new ApiHandler(client, config, tokenCache, app);
     }
 
@@ -52,7 +51,6 @@ public class ApiHandler
             var accounts = await App.GetAccountsAsync();
             var result = await App.AcquireTokenSilent(Config.Scopes, accounts.FirstOrDefault()).ExecuteAsync();
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", result.AccessToken);
-
         }
         catch
         {

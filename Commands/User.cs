@@ -1,6 +1,7 @@
 using Spectre.Console;
 using Spectre.Console.Cli;
 using Spectre.Console.Json;
+using System.Text.Json;
 
 public class UserCommand : AsyncCommand<UserCommand.Settings>
 {
@@ -9,17 +10,12 @@ public class UserCommand : AsyncCommand<UserCommand.Settings>
     }
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        var res = await ApiService.Instance.GetRoute("/users/me");
-        if (res.Success)
-        {
-            AnsiConsole.Write(new JsonText(res.Content));
-            return 1;
-        }
-        else
-        {
-            AnsiConsole.MarkupLine($"[red]Error {res.StatusCode}[/]");
-            return 0;
-        }
+        var res = await UserConfig.LoadAsync();
+        if (res == null) return 0;
+
+        var json = JsonSerializer.Serialize(res, ApiService.Instance.options);
+        AnsiConsole.Write(new JsonText(json));
+        return 1;
     }
 }
 

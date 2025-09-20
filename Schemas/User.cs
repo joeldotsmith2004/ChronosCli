@@ -51,3 +51,15 @@ public class User : SchemaBase
     public ICollection<TimeEntry> TimeEntries { get; set; } = null!;
     public ICollection<LeaveEntry> LeaveEntries { get; set; } = null!;
 }
+
+public class UserBase
+{
+    public required int Id { get; set; }
+    public required string Name { get; set; }
+    public required string Email { get; set; }
+    public ContractType ContractType { get; set; } = ContractType.Unknown;
+    public float DefaultEntryHours { get; set; } = 8.0f;
+    public bool IsAdmin { get; set; } = false;
+    public bool IsProjectManager { get; set; } = false;
+    public int features { get; set; } = 0;
+}

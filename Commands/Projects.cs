@@ -11,7 +11,10 @@ public class GetProjects : AsyncCommand<GetProjects.Settings>
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        var res = await ApiService.Instance.GetRoute("/task-user/166"); // TODO remove hard coded ID maybe store in config
+        var user = await UserConfig.LoadAsync();
+        if (user == null) return 0;
+
+        var res = await ApiService.Instance.GetRoute($"/task-user/{user.Id}");
         if (res.Success)
         {
             var projects = JsonSerializer.Deserialize<List<ProjectAssignedDto>>(res.Content, ApiService.Instance.options);
@@ -44,7 +47,10 @@ public class GetPos : AsyncCommand<GetPos.Settings>
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        var res = await ApiService.Instance.GetRoute("/task-user/166"); // TODO remove hard coded ID maybe store in config
+        var user = await UserConfig.LoadAsync();
+        if (user == null) return 0;
+
+        var res = await ApiService.Instance.GetRoute($"/task-user/{user.Id}");
         if (res.Success)
         {
             var projects = JsonSerializer.Deserialize<List<ProjectAssignedDto>>(res.Content, JsonOptions);
@@ -79,7 +85,10 @@ public class GetTasks : AsyncCommand<GetTasks.Settings>
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        var res = await ApiService.Instance.GetRoute("/task-user/166");
+        var user = await UserConfig.LoadAsync();
+        if (user == null) return 0;
+
+        var res = await ApiService.Instance.GetRoute($"/task-user/{user.Id}");
         if (res.Success)
         {
             var projects = JsonSerializer.Deserialize<List<ProjectAssignedDto>>(res.Content, JsonOptions);
