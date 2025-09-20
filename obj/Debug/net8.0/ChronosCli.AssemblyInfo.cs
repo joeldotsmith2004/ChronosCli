@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ChronosCli")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4460d1a6e868a4258d576d262b014b1304b47520")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+34c3cc273d439165f2365f22b79a480a8addac6e")]
 [assembly: System.Reflection.AssemblyProductAttribute("ChronosCli")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ChronosCli")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
