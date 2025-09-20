@@ -1,2 +1,11 @@
-obj/
-bin/
+/bin/
+/obj/
+
+.vs/
+*.user
+*.suo
+*.idea/
+
+*.log
+
+*.tmp
