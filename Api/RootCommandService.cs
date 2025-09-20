@@ -2,7 +2,7 @@ using Spectre.Console.Cli;
 
 public static class RootCommandService
 {
-    public static CommandApp Instance { get; private set; } = new CommandApp();
+    public static CommandApp<TuiCommand> Instance { get; private set; } = new CommandApp<TuiCommand>();
 
     public static void Init()
     {
