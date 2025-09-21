@@ -1,91 +1,136 @@
 using Terminal.Gui;
+using Backend.Core.Schemas;
+using System.Text.Json;
 
 public class Tui : Terminal.Gui.Window
 {
     private const int gap = 1;
 
-    private Window entries = null!;
-    private Window tasks = null!;
-    private StatusBar statusBar = null!;
-    private Label userNameItem = null!;
-    private Label emailItem = null!;
-    private Label actionItem = null!;
+    private UserBase userData = null!;
+    private List<TimeEntryGet> entryData = null!;
+    private List<ProjectAssignedDto> tasksData = null!;
+
+    private DateOnly startDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-(7 + (int)DateTime.Today.DayOfWeek - (int)DayOfWeek.Monday) % 7));
+    public DateOnly endDate { get; set; } = DateOnly.FromDateTime(DateTime.Today.AddDays(7 - (int)DateTime.Today.DayOfWeek % 7));
+
+    private SpinnerView spinner = null!;
+    private Entries entries = null!;
+    private Tasks tasks = null!;
+    private BottomBar statusBar = null!;
 
     public Tui()
     {
-
         SetTheme();
-
         // base settings
         this.Y = 0;
         this.X = 0;
         this.BorderStyle = LineStyle.None;
         this.ColorScheme = Colors.ColorSchemes["TopLevel"];
 
-        AddWindows();
-        CreateStatusBar();
+        entries = new Entries();
+        tasks = new Tasks(entries);
+        statusBar = new BottomBar();
+
+
+        // loading spinner
+        spinner = new SpinnerView()
+        {
+            X = Pos.Center(),
+            Y = Pos.Center(),
+            AutoSpin = true,
+            ColorScheme = Colors.ColorSchemes["Base"]
+        };
+        this.Add(spinner);
+
+
+        _ = LoadUserAsync();
+    }
+
+    public void FinishedLoading()
+    {
+        this.Remove(spinner);
 
         this.Add(entries);
         this.Add(tasks);
         this.Add(statusBar);
-        _ = LoadUserAsync();
+
+        entries.entriesTable.SetFocus();
     }
 
-    public void AddWindows()
+    public bool IsFinishedLoading()
     {
-        entries = new Window()
-        {
-            X = 1,
-            Y = 1,
-            Width = Dim.Fill(gap),
-            Height = Dim.Percent(60),
-            BorderStyle = LineStyle.Rounded,
-            Title = "1",
-            HotKey = Key.D1
-        };
-
-        tasks = new Window()
-        {
-            X = gap,
-            Y = Pos.Bottom(entries),
-            Width = Dim.Fill(gap),
-            BorderStyle = LineStyle.Rounded,
-            Height = Dim.Fill(gap),
-            Title = "2",
-            HotKey = Key.D2
-        };
-    }
-
-    public View CreateStatusBar()
-    {
-        statusBar = new StatusBar()
-        {
-            X = 0,
-            Y = Pos.Bottom(tasks),
-            Width = Dim.Fill(),
-            AlignmentModes = AlignmentModes.AddSpaceBetweenItems
-        };
-
-        userNameItem = new Label() { Text = "UserName", ColorScheme = Colors.ColorSchemes["Green"] };
-        emailItem = new Label() { Text = "Email", ColorScheme = Colors.ColorSchemes["Yellow"] };
-        actionItem = new Label() { Text = "" };
-        statusBar.Add(userNameItem);
-        statusBar.Add(emailItem);
-        statusBar.Add(actionItem);
-        return statusBar;
+        return (entries != null || tasks != null || statusBar != null);
     }
 
     private async Task LoadUserAsync()
     {
-        var user = await UserConfig.LoadAsync();
-        if (user == null) return;
+        var res = await UserConfig.LoadAsync();
+        if (res == null) return;
+        userData = res;
 
         Application.Invoke(() =>
         {
-            userNameItem.Text = $"{user.Name}";
-            emailItem.Text = $"{user.Email}";
+            statusBar.userNameItem.Text = $"{userData.Name}";
+            statusBar.emailItem.Text = $"{userData.Email}";
             statusBar.SetNeedsDraw();
         });
+
+        // now that we have the user we can load the rest of the data
+        _ = LoadEntriesAsync();
+        _ = LoadTasksAsync();
+    }
+
+    private async Task LoadEntriesAsync()
+    {
+        var res = await ApiService.Instance.GetRoute($"/time-entry/{userData.Id}?minDate={startDate.ToString("yyyy-MM-dd")}&maxDate={endDate.ToString("yyyy-MM-dd")}");
+        if (!res.Success) return;
+        var data = JsonSerializer.Deserialize<List<TimeEntryGet>>(res.Content, ApiService.Instance.options);
+        if (data == null) return;
+        entryData = data;
+
+        Application.Invoke(() =>
+        {
+            foreach (var entry in entryData)
+            {
+                entries.entriesData.Rows.Add(entry.Id, entry.TaskId, entry.Hours, entry.Comment);
+                entries.entriesTable.Update();
+                entries.NeedsDraw = true;
+            }
+        });
+
+        if (IsFinishedLoading()) FinishedLoading();
+    }
+
+    private async Task LoadTasksAsync()
+    {
+        var res = await ApiService.Instance.GetRoute($"/task-user/{userData.Id}");
+        if (!res.Success) return;
+        var data = JsonSerializer.Deserialize<List<ProjectAssignedDto>>(res.Content, ApiService.Instance.options);
+        if (data == null) return;
+        tasksData = data;
+
+        Application.Invoke(() =>
+        {
+            tasks.RemoveAll();
+            foreach (var project in tasksData)
+            {
+                foreach (var po in project.PurchaseOrders)
+                {
+                    foreach (var task in po.Tasks)
+                    {
+                        if (task.CanAddEntries)
+                        {
+                            tasks.taskData.Rows.Add(project.Name, task.Id.ToString(), task.Name, po.Name);
+                            tasks.taskTable.Update();
+                            tasks.NeedsDraw = true;
+                        }
+                    }
+                }
+            }
+            tasks.Add(tasks.taskTable);
+        });
+
+        if (IsFinishedLoading()) FinishedLoading();
     }
 
     public void SetTheme()
@@ -101,21 +146,6 @@ public class Tui : Terminal.Gui.Window
         Colors.ColorSchemes["TopLevel"] = new ColorScheme
         {
             Normal = new Terminal.Gui.Attribute(Color.Black, Color.Black)
-        };
-
-        Colors.ColorSchemes["Green"] = new ColorScheme
-        {
-            Normal = new Terminal.Gui.Attribute(Color.Green, Color.Black)
-        };
-
-        Colors.ColorSchemes["Yellow"] = new ColorScheme
-        {
-            Normal = new Terminal.Gui.Attribute(Color.Yellow, Color.Black)
-        };
-
-        Colors.ColorSchemes["Blue"] = new ColorScheme
-        {
-            Normal = new Terminal.Gui.Attribute(Color.Blue, Color.Black)
         };
 
         Colors.ColorSchemes["Dialog"] = new ColorScheme

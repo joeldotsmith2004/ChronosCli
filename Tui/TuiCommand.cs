@@ -10,6 +10,10 @@ public sealed class TuiCommand : Command<TuiCommand.Settings>
         Application.Init();
         try
         {
+            Application.KeyBindings.Remove(Key.Tab);
+            Application.KeyBindings.Remove(Key.Tab.WithShift);
+            Application.KeyBindings.Add(Key.Tab, Terminal.Gui.Command.NextTabGroup);
+            Application.KeyBindings.Add(Key.Tab.WithShift, Terminal.Gui.Command.PreviousTabGroup);
             Application.Run(new Tui());
         }
         finally

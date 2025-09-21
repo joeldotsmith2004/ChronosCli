@@ -74,11 +74,6 @@ public class GetPos : AsyncCommand<GetPos.Settings>
 
 public class GetTasks : AsyncCommand<GetTasks.Settings>
 {
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true
-    };
-
     public class Settings : CommandSettings
     {
     }
@@ -91,7 +86,7 @@ public class GetTasks : AsyncCommand<GetTasks.Settings>
         var res = await ApiService.Instance.GetRoute($"/task-user/{user.Id}");
         if (res.Success)
         {
-            var projects = JsonSerializer.Deserialize<List<ProjectAssignedDto>>(res.Content, JsonOptions);
+            var projects = JsonSerializer.Deserialize<List<ProjectAssignedDto>>(res.Content, ApiService.Instance.options);
             if (projects == null) return 0;
 
             var table = new Table();
