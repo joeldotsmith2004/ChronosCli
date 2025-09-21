@@ -1,7 +1,7 @@
 using Terminal.Gui;
 using System.Data;
 
-public class Tasks : Terminal.Gui.Window
+public class Tasks : Window
 {
     private const int gap = 1;
 

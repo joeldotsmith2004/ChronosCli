@@ -1,7 +1,7 @@
 using Terminal.Gui;
 using System.Data;
 
-public class Entries : Terminal.Gui.Window
+public class Entries : Window
 {
     private const int gap = 1;
 
@@ -34,8 +34,18 @@ public class Entries : Terminal.Gui.Window
             Table = entriesSource,
             HotKey = '1',
             CollectionNavigator = null,
-
         };
+        entriesTable.KeyDown += (view, keyEvent) =>
+        {
+            if (keyEvent == Key.E)
+            {
+                var dlg = new EntryDialog(null);
+                Application.Run(dlg);
+                dlg.Dispose();
+                keyEvent.Handled = true;
+            }
+        };
+
 
         entriesTable.KeyBindings.Add(Key.H, Command.Left);
         entriesTable.KeyBindings.Add(Key.J, Command.Down);

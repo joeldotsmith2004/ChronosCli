@@ -1,6 +1,6 @@
 using Terminal.Gui;
 
-public class BottomBar : Terminal.Gui.StatusBar
+public class BottomBar : StatusBar
 {
     public Label userNameItem = null!;
     public Label emailItem = null!;

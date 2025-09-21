@@ -2,7 +2,7 @@ using Terminal.Gui;
 using Backend.Core.Schemas;
 using System.Text.Json;
 
-public class Tui : Terminal.Gui.Window
+public class Tui : Window
 {
     private const int gap = 1;
 
@@ -41,7 +41,6 @@ public class Tui : Terminal.Gui.Window
             ColorScheme = Colors.ColorSchemes["Base"]
         };
         this.Add(spinner);
-
 
         _ = LoadUserAsync();
     }
@@ -148,10 +147,18 @@ public class Tui : Terminal.Gui.Window
             Normal = new Terminal.Gui.Attribute(Color.Black, Color.Black)
         };
 
-        Colors.ColorSchemes["Dialog"] = new ColorScheme
+        Colors.ColorSchemes["Highlighted"] = new ColorScheme
         {
             Normal = new Terminal.Gui.Attribute(Color.White, Color.DarkGray),
-            Focus = new Terminal.Gui.Attribute(Color.Black, Color.Gray),
+            Focus = new Terminal.Gui.Attribute(Color.White, Color.Black),
+            HotNormal = new Terminal.Gui.Attribute(Color.Black, Color.Gray),
+            HotFocus = new Terminal.Gui.Attribute(Color.Black, Color.Gray)
+        };
+
+        Colors.ColorSchemes["Dialog"] = new ColorScheme
+        {
+            Normal = new Terminal.Gui.Attribute(Color.BrightGreen, Color.Black),
+            Focus = new Terminal.Gui.Attribute(Color.White, Color.Black),
             HotNormal = new Terminal.Gui.Attribute(Color.BrightYellow, Color.DarkGray),
             HotFocus = new Terminal.Gui.Attribute(Color.Black, Color.BrightYellow)
         };
