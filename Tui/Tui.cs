@@ -13,10 +13,10 @@ public class Tui : Window
     private DateOnly startDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-(7 + (int)DateTime.Today.DayOfWeek - (int)DayOfWeek.Monday) % 7));
     public DateOnly endDate { get; set; } = DateOnly.FromDateTime(DateTime.Today.AddDays(7 - (int)DateTime.Today.DayOfWeek % 7));
 
-    private SpinnerView spinner = null!;
-    private Entries entries = null!;
-    private Tasks tasks = null!;
-    private BottomBar statusBar = null!;
+    public SpinnerView spinner = null!;
+    public Entries entries = null!;
+    public Tasks tasks = null!;
+    public BottomBar statusBar = null!;
 
     public Tui()
     {
@@ -28,7 +28,24 @@ public class Tui : Window
         this.ColorScheme = Colors.ColorSchemes["TopLevel"];
 
         entries = new Entries();
+        entries.HasFocusChanged += (old, newFocused) =>
+        {
+            if (newFocused.NewValue == true)
+            {
+                statusBar.SelectEntries();
+            }
+        };
+
+
         tasks = new Tasks(entries);
+        tasks.HasFocusChanged += (old, newFocused) =>
+        {
+            if (newFocused.NewValue == true)
+            {
+                statusBar.SelectTasks();
+            }
+        };
+
         statusBar = new BottomBar();
 
 

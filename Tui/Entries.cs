@@ -47,6 +47,7 @@ public class Entries : Window
         };
 
 
+
         entriesTable.KeyBindings.Add(Key.H, Command.Left);
         entriesTable.KeyBindings.Add(Key.J, Command.Down);
         entriesTable.KeyBindings.Add(Key.K, Command.Up);
