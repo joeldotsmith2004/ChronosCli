@@ -6,7 +6,6 @@ using System.Text;
 public class Tui : Window
 {
     private const int gap = 1;
-
     private Entries entries = null!;
     private Tasks tasks = null!;
     private BottomBar statusBar = null!;
@@ -30,6 +29,20 @@ public class Tui : Window
         this.ColorScheme = Colors.ColorSchemes["TopLevel"];
 
         entries = new Entries();
+        entries.entriesTable.KeyDown += (view, keyEvent) =>
+        {
+            if (keyEvent == Key.E)
+            {
+                EditEntry();
+                keyEvent.Handled = true;
+            }
+
+            else if (keyEvent == Key.D)
+            {
+                DeleteEntry();
+                keyEvent.Handled = true;
+            }
+        };
         entries.HasFocusChanged += (old, newFocused) =>
         {
             if (newFocused.NewValue == true)
@@ -207,6 +220,67 @@ public class Tui : Window
             RemoveLoading(tasks, tasks.taskTable);
         }
 
+    }
+
+    private void DeleteEntry()
+    {
+        if (Store.Instance.Entries.Count <= entries.entriesTable.SelectedRow || entries.entriesTable.SelectedRow < 0) return;
+        var n = MessageBox.YesNo("Delete Entry", "Are you sure you want to delete this entry it cannot be undone?");
+        if (n == 0)
+        {
+            SetLoading(entries);
+            var row = entries.entriesTable.SelectedRow;
+            Task.Run(async () =>
+            {
+                var res = await ApiService.Instance.DeleteRoute($"/time-entry/{Store.Instance.Entries[row].Id}");
+                if (res.Success)
+                {
+                    Application.Invoke(() =>
+                    {
+                        Store.Instance.Entries.RemoveAt(row);
+                        entries.entriesData.Rows.RemoveAt(row);
+                        entries.entriesTable.SelectedRow = Math.Max(0, row - 1);
+                        entries.entriesTable.NeedsDraw = true;
+                        entries.entriesTable.Update();
+                    });
+                }
+            });
+            RemoveLoading(entries, entries.entriesTable);
+        }
+    }
+
+    private void EditEntry()
+    {
+        if (Store.Instance.Entries.Count() <= entries.entriesTable.SelectedRow || entries.entriesTable.SelectedRow < 0) return;
+        var updated = EditDialog.Edit(entries.entriesTable.SelectedRow);
+        if (updated != null)
+        {
+            SetLoading(entries);
+            Task.Run(async () =>
+            {
+                var json = JsonSerializer.Serialize(updated, ApiService.Instance.options);
+                var payload = new StringContent(json, new UTF8Encoding(false), "application/json");
+                var res = await ApiService.Instance.PutRoute("/time-entry", payload);
+                if (res.Success)
+                {
+                    var obj = JsonSerializer.Deserialize<TimeEntryGet>(res.Content, ApiService.Instance.options);
+                    if (obj != null)
+                    {
+                        Tuple<string, string, string> projectData;
+                        Store.Instance.Entries[entries.entriesTable.SelectedRow] = obj;
+                        entries.entriesData.Rows.Clear();
+                        foreach (var entry in Store.Instance.Entries)
+                        {
+                            projectData = Store.Instance.TaskToProject[entry.TaskId];
+                            entries.entriesData.Rows.Add(projectData.Item1, projectData.Item3, entry.Date, entry.Hours, entry.Comment);
+                            entries.entriesTable.Update();
+                            NeedsDraw = true;
+                        }
+                    }
+                }
+            });
+            RemoveLoading(entries, entries.entriesTable);
+        }
     }
 
 
