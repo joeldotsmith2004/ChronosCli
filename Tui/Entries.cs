@@ -19,8 +19,9 @@ public class Entries : Window
         this.Title = "1";
 
         entriesData = new DataTable();
-        entriesData.Columns.Add("Entry Id", typeof(int));
-        entriesData.Columns.Add("Task Id", typeof(int));
+        entriesData.Columns.Add("Project", typeof(string));
+        entriesData.Columns.Add("Task", typeof(string));
+        entriesData.Columns.Add("Date", typeof(DateOnly));
         entriesData.Columns.Add("Hours", typeof(float));
         entriesData.Columns.Add("Comment", typeof(string));
 
@@ -35,11 +36,13 @@ public class Entries : Window
             HotKey = '1',
             CollectionNavigator = null,
         };
+
         entriesTable.KeyDown += (view, keyEvent) =>
         {
             if (keyEvent == Key.E)
             {
-                var dlg = new EntryDialog(null);
+                if (Store.Instance.Entries.Count() <= entriesTable.SelectedRow || entriesTable.SelectedRow < 0) return;
+                var dlg = new EntryDialog(Store.Instance.Entries[entriesTable.SelectedRow]);
                 Application.Run(dlg);
                 dlg.Dispose();
                 keyEvent.Handled = true;

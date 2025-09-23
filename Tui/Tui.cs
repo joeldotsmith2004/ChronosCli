@@ -6,13 +6,6 @@ public class Tui : Window
 {
     private const int gap = 1;
 
-    private UserBase userData = null!;
-    private List<TimeEntryGet> entryData = null!;
-    private List<ProjectAssignedDto> tasksData = null!;
-
-    private DateOnly startDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-(7 + (int)DateTime.Today.DayOfWeek - (int)DayOfWeek.Monday) % 7));
-    public DateOnly endDate { get; set; } = DateOnly.FromDateTime(DateTime.Today.AddDays(7 - (int)DateTime.Today.DayOfWeek % 7));
-
     public SpinnerView spinner = null!;
     public Entries entries = null!;
     public Tasks tasks = null!;
@@ -82,33 +75,33 @@ public class Tui : Window
     {
         var res = await UserConfig.LoadAsync();
         if (res == null) return;
-        userData = res;
+        Store.Instance.User = res;
 
         Application.Invoke(() =>
         {
-            statusBar.userNameItem.Text = $"{userData.Name}";
-            statusBar.emailItem.Text = $"{userData.Email}";
+            statusBar.infoLabel.Text = $"{Store.Instance.User.Name} - {Store.Instance.User.Email}";
             statusBar.SetNeedsDraw();
         });
 
         // now that we have the user we can load the rest of the data
-        _ = LoadEntriesAsync();
         _ = LoadTasksAsync();
     }
 
     private async Task LoadEntriesAsync()
     {
-        var res = await ApiService.Instance.GetRoute($"/time-entry/{userData.Id}?minDate={startDate.ToString("yyyy-MM-dd")}&maxDate={endDate.ToString("yyyy-MM-dd")}");
+        var res = await ApiService.Instance.GetRoute($"/time-entry/{Store.Instance.User.Id}?minDate={Store.Instance.startDate.ToString("yyyy-MM-dd")}&maxDate={Store.Instance.endDate.ToString("yyyy-MM-dd")}");
         if (!res.Success) return;
         var data = JsonSerializer.Deserialize<List<TimeEntryGet>>(res.Content, ApiService.Instance.options);
         if (data == null) return;
-        entryData = data;
+        Store.Instance.Entries = data;
+        Tuple<string, string, string> projectData;
 
         Application.Invoke(() =>
         {
-            foreach (var entry in entryData)
+            foreach (var entry in Store.Instance.Entries)
             {
-                entries.entriesData.Rows.Add(entry.Id, entry.TaskId, entry.Hours, entry.Comment);
+                projectData = Store.Instance.TaskToProject[entry.TaskId];
+                entries.entriesData.Rows.Add(projectData.Item1, projectData.Item3, entry.Date, entry.Hours, entry.Comment);
                 entries.entriesTable.Update();
                 entries.NeedsDraw = true;
             }
@@ -119,16 +112,16 @@ public class Tui : Window
 
     private async Task LoadTasksAsync()
     {
-        var res = await ApiService.Instance.GetRoute($"/task-user/{userData.Id}");
+        var res = await ApiService.Instance.GetRoute($"/task-user/{Store.Instance.User.Id}");
         if (!res.Success) return;
         var data = JsonSerializer.Deserialize<List<ProjectAssignedDto>>(res.Content, ApiService.Instance.options);
         if (data == null) return;
-        tasksData = data;
+        Store.Instance.Tasks = data;
 
         Application.Invoke(() =>
         {
             tasks.RemoveAll();
-            foreach (var project in tasksData)
+            foreach (var project in Store.Instance.Tasks)
             {
                 foreach (var po in project.PurchaseOrders)
                 {
@@ -140,13 +133,14 @@ public class Tui : Window
                             tasks.taskTable.Update();
                             tasks.NeedsDraw = true;
                         }
+                        Store.Instance.TaskToProject.Add(task.Id, new Tuple<string, string, string>(project.Name, po.Name, task.Name));
                     }
                 }
             }
             tasks.Add(tasks.taskTable);
         });
 
-        if (IsFinishedLoading()) FinishedLoading();
+        _ = LoadEntriesAsync();
     }
 
     public void SetTheme()
@@ -164,12 +158,12 @@ public class Tui : Window
             Normal = new Terminal.Gui.Attribute(Color.Black, Color.Black)
         };
 
-        Colors.ColorSchemes["Highlighted"] = new ColorScheme
+        Colors.ColorSchemes["InputField"] = new ColorScheme
         {
             Normal = new Terminal.Gui.Attribute(Color.White, Color.DarkGray),
-            Focus = new Terminal.Gui.Attribute(Color.White, Color.Black),
-            HotNormal = new Terminal.Gui.Attribute(Color.Black, Color.Gray),
-            HotFocus = new Terminal.Gui.Attribute(Color.Black, Color.Gray)
+            Focus = new Terminal.Gui.Attribute(Color.Black, Color.Gray),
+            HotNormal = new Terminal.Gui.Attribute(Color.Cyan, Color.Black),
+            HotFocus = new Terminal.Gui.Attribute(Color.Black, Color.Blue)
         };
 
         Colors.ColorSchemes["Dialog"] = new ColorScheme

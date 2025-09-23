@@ -2,9 +2,7 @@ using Terminal.Gui;
 
 public class BottomBar : StatusBar
 {
-    public Label userNameItem = null!;
-    public Label emailItem = null!;
-    public Label actionItem = null!;
+    public Label infoLabel = null!;
 
     public List<Label> entryItems = new List<Label>();
     public List<Label> taskItems = new List<Label>();
@@ -16,9 +14,7 @@ public class BottomBar : StatusBar
         this.AlignmentModes = AlignmentModes.AddSpaceBetweenItems;
 
         // default items
-        userNameItem = new Label() { Text = "UserName" };
-        emailItem = new Label() { Text = "Email" };
-        actionItem = new Label() { Text = "" };
+        infoLabel = new Label() { Text = "No Information" };
 
         // task specfic
         taskItems.Add(new Label() { Text = "Add (a)" });
@@ -27,9 +23,7 @@ public class BottomBar : StatusBar
         entryItems.Add(new Label() { Text = "Edit (e)" });
         entryItems.Add(new Label() { Text = "Delete (d)" });
 
-        this.Add(userNameItem);
-        this.Add(emailItem);
-        this.Add(actionItem);
+        this.Add(infoLabel);
     }
 
     public void SelectEntries()
@@ -39,7 +33,7 @@ public class BottomBar : StatusBar
         var leftGroup = new View { Width = Dim.Auto(), Height = 1 };
         var rightGroup = new View { Width = Dim.Auto(), Height = 1 };
 
-        int x = 0;
+        int x = 2;
         foreach (var entry in entryItems)
         {
             entry.X = x;
@@ -48,7 +42,7 @@ public class BottomBar : StatusBar
         }
 
         int rx = 0;
-        foreach (var r in new[] { userNameItem, emailItem, actionItem })
+        foreach (var r in new[] { infoLabel })
         {
             r.X = rx;
             rightGroup.Add(r);
@@ -73,7 +67,7 @@ public class BottomBar : StatusBar
         var leftGroup = new View { Width = Dim.Auto(), Height = 1 };
         var rightGroup = new View { Width = Dim.Auto(), Height = 1 };
 
-        int x = 0;
+        int x = 2;
         foreach (var task in taskItems)
         {
             task.X = x;
@@ -82,7 +76,7 @@ public class BottomBar : StatusBar
         }
 
         int rx = 0;
-        foreach (var r in new[] { userNameItem, emailItem, actionItem })
+        foreach (var r in new[] { infoLabel })
         {
             r.X = rx;
             rightGroup.Add(r);
