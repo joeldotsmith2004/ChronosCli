@@ -36,13 +36,18 @@ public class Tui : Window
                 EditEntry();
                 keyEvent.Handled = true;
             }
-
             else if (keyEvent == Key.D)
             {
                 DeleteEntry();
                 keyEvent.Handled = true;
             }
+            else if (keyEvent == Key.F)
+            {
+                FilterEntries();
+                keyEvent.Handled = true;
+            }
         };
+
         entries.HasFocusChanged += (old, newFocused) =>
         {
             if (newFocused.NewValue == true)
@@ -84,14 +89,14 @@ public class Tui : Window
     {
         view.Remove(loader);
         view.Add(toAdd);
-        this.NeedsDraw = true;
+        view.NeedsDraw = true;
     }
 
     private void SetLoading(View view)
     {
         view.RemoveAll();
         view.Add(loader);
-        this.NeedsDraw = true;
+        view.NeedsDraw = true;
     }
 
     public void FinishedLoading()
@@ -192,7 +197,7 @@ public class Tui : Window
         var updated = AddDialog.Add(tasks.taskTable.SelectedRow);
         if (updated != null)
         {
-            SetLoading(tasks);
+            SetLoading(entries);
             Task.Run(async () =>
             {
                 var json = JsonSerializer.Serialize(updated, ApiService.Instance.options);
@@ -216,8 +221,12 @@ public class Tui : Window
                         NeedsDraw = true;
                     }
                 }
+
+                Application.Invoke(() =>
+                {
+                    RemoveLoading(entries, entries.entriesTable);
+                });
             });
-            RemoveLoading(tasks, tasks.taskTable);
         }
 
     }
@@ -244,8 +253,12 @@ public class Tui : Window
                         entries.entriesTable.Update();
                     });
                 }
+
+                Application.Invoke(() =>
+                {
+                    RemoveLoading(entries, entries.entriesTable);
+                });
             });
-            RemoveLoading(entries, entries.entriesTable);
         }
     }
 
@@ -278,9 +291,43 @@ public class Tui : Window
                         }
                     }
                 }
+                Application.Invoke(() =>
+                {
+                    RemoveLoading(entries, entries.entriesTable);
+                });
             });
-            RemoveLoading(entries, entries.entriesTable);
         }
+    }
+
+    private void FilterEntries()
+    {
+        var filter = FilterDialog.Entries();
+        if (filter == 0) return;
+
+        SetLoading(entries);
+        Task.Run(async () =>
+        {
+            var res = await ApiService.Instance.GetRoute($"/time-entry/{Store.Instance.User.Id}?minDate={Store.Instance.startDate.ToString("yyyy-MM-dd")}&maxDate={Store.Instance.endDate.ToString("yyyy-MM-dd")}");
+            if (!res.Success) return;
+            var data = JsonSerializer.Deserialize<List<TimeEntryGet>>(res.Content, ApiService.Instance.options);
+            if (data == null) return;
+            Store.Instance.Entries = data.OrderByDescending(x => x.Date).ToList();
+            Tuple<string, string, string> projectData;
+
+            Application.Invoke(() =>
+            {
+                entries.entriesData.Rows.Clear();
+                foreach (var entry in Store.Instance.Entries)
+                {
+                    projectData = Store.Instance.TaskToProject[entry.TaskId];
+                    entries.entriesData.Rows.Add(projectData.Item1, projectData.Item3, entry.Date, entry.Hours, entry.Comment);
+                    entries.entriesTable.Update();
+                    entries.NeedsDraw = true;
+                }
+                RemoveLoading(entries, entries.entriesTable);
+            });
+
+        });
     }
 
 

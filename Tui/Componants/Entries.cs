@@ -9,15 +9,6 @@ public class Entries : Window
     public DataTableSource entriesSource = null!;
     public DataTable entriesData = null!;
 
-    private SpinnerView loader = new SpinnerView
-
-    {
-        X = Pos.Center(),
-        Y = Pos.Center(),
-        AutoSpin = true,
-        ColorScheme = Colors.ColorSchemes["Base"]
-    };
-
     public Entries()
     {
         this.X = 1;

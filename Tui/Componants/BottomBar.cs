@@ -22,6 +22,7 @@ public class BottomBar : StatusBar
         // entry specfic
         entryItems.Add(new Label() { Text = "Edit (e)" });
         entryItems.Add(new Label() { Text = "Delete (d)" });
+        entryItems.Add(new Label() { Text = "Filter (f)" });
 
         this.Add(infoLabel);
     }

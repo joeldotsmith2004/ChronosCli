@@ -7,7 +7,8 @@ public static class MessageBox
         {
             Width = Dim.Percent(40),
             Height = Dim.Percent(30),
-            Title = title
+            Title = title,
+            ShadowStyle = ShadowStyle.None,
         };
 
         var lbl = new Label() { X = Pos.Center(), Y = 1, Text = message };
