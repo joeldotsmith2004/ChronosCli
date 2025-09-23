@@ -12,7 +12,6 @@ public class Tui : Window
     private BottomBar statusBar = null!;
 
     private SpinnerView loader = new SpinnerView
-
     {
         X = Pos.Center(),
         Y = Pos.Center(),
