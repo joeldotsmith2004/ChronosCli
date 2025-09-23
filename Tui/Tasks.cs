@@ -9,6 +9,7 @@ public class Tasks : Window
     public DataTableSource taskSource = null!;
     public DataTable taskData = null!;
 
+
     public Tasks(View UnderView)
     {
         this.X = gap;
@@ -17,7 +18,6 @@ public class Tasks : Window
         this.BorderStyle = LineStyle.Rounded;
         this.Height = Dim.Fill(gap);
         this.Title = "2";
-
 
         taskData = new DataTable();
         taskData.Columns.Add("Project", typeof(string));
@@ -36,6 +36,7 @@ public class Tasks : Window
             HotKey = '2',
             CollectionNavigator = null,
         };
+
 
         taskTable.KeyBindings.Add(Key.H, Command.Left);
         taskTable.KeyBindings.Add(Key.J, Command.Down);
