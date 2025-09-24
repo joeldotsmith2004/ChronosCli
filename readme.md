@@ -1,6 +1,8 @@
 # Chronos CLI
 
-A cross-platform command-line tool for managing your time logging at Enco.
+A cross-platform command-line tool for managing your time logging at Enco, now also features a Terminal User Interface (TUI)!.
+
+![Example Tui](ReadMeResources/EditEntry.png)
 
 ## Installation
 
@@ -33,10 +35,15 @@ chronos --help
 
 ## Usage
 
-The basic command format is:
+The CLI uses the basic command format of:
 
 ```bash
 chronos <command> [options]
+```
+
+While to use the TUI:
+```bash
+chronos
 ```
 
 ## Configuration
