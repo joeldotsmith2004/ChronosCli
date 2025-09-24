@@ -19,7 +19,7 @@ public class Tui : Window
 
     public Tui()
     {
-        SetTheme();
+        ThemeStore.Load();
         loader.ColorScheme = Colors.ColorSchemes["Base"];
 
         // base settings
@@ -52,6 +52,8 @@ public class Tui : Window
         {
             if (newFocused.NewValue == true)
             {
+                entries.ColorScheme = Colors.ColorSchemes["MainWindowHighlight"];
+                tasks.ColorScheme = Colors.ColorSchemes["Base"];
                 statusBar.SelectEntries();
             }
         };
@@ -71,6 +73,8 @@ public class Tui : Window
         {
             if (newFocused.NewValue == true)
             {
+                tasks.ColorScheme = Colors.ColorSchemes["MainWindowHighlight"];
+                entries.ColorScheme = Colors.ColorSchemes["Base"];
                 statusBar.SelectTasks();
             }
         };
@@ -334,51 +338,6 @@ public class Tui : Window
     #endregion
 
     #region Theme
-    public void SetTheme()
-    {
-        Colors.ColorSchemes["Base"] = new ColorScheme
-        {
-            Normal = new Terminal.Gui.Attribute(Color.White, Color.Black),
-            Focus = new Terminal.Gui.Attribute(Color.Black, Color.Gray),
-            HotNormal = new Terminal.Gui.Attribute(Color.BrightCyan, Color.Black),
-            HotFocus = new Terminal.Gui.Attribute(Color.Black, Color.BrightCyan)
-        };
-
-        Colors.ColorSchemes["TopLevel"] = new ColorScheme
-        {
-            Normal = new Terminal.Gui.Attribute(Color.Black, Color.Black)
-        };
-
-        Colors.ColorSchemes["InputField"] = new ColorScheme
-        {
-            Normal = new Terminal.Gui.Attribute(Color.White, Color.DarkGray),
-            Focus = new Terminal.Gui.Attribute(Color.Black, Color.Gray),
-            HotNormal = new Terminal.Gui.Attribute(Color.Cyan, Color.Black),
-            HotFocus = new Terminal.Gui.Attribute(Color.Black, Color.Blue)
-        };
-
-        Colors.ColorSchemes["Dialog"] = new ColorScheme
-        {
-            Normal = new Terminal.Gui.Attribute(Color.BrightGreen, Color.Black),
-            Focus = new Terminal.Gui.Attribute(Color.White, Color.Black),
-            HotNormal = new Terminal.Gui.Attribute(Color.BrightYellow, Color.DarkGray),
-            HotFocus = new Terminal.Gui.Attribute(Color.Black, Color.BrightYellow)
-        };
-
-        Colors.ColorSchemes["Menu"] = new ColorScheme
-        {
-            Normal = new Terminal.Gui.Attribute(Color.White, Color.Black),
-            Focus = new Terminal.Gui.Attribute(Color.Black, Color.Gray),
-            HotNormal = new Terminal.Gui.Attribute(Color.BrightCyan, Color.Black),
-            HotFocus = new Terminal.Gui.Attribute(Color.Black, Color.BrightCyan)
-        };
-
-        Colors.ColorSchemes["Error"] = new ColorScheme
-        {
-            Normal = new Terminal.Gui.Attribute(Color.BrightRed, Color.Black),
-            Focus = new Terminal.Gui.Attribute(Color.Black, Color.BrightRed)
-        };
-    }
     #endregion
 }
 
