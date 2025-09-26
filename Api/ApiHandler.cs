@@ -54,11 +54,10 @@ public class ApiHandler
         }
         catch
         {
-            var result = await App.AcquireTokenWithDeviceCode(Config.Scopes, msg =>
-            {
-                AnsiConsole.MarkupLine($"[yellow]{msg.Message}[/]");
-                return Task.CompletedTask;
-            }).ExecuteAsync();
+            var result = await App.AcquireTokenInteractive(Config.Scopes)
+                .WithPrompt(Prompt.SelectAccount) 
+                .ExecuteAsync();
+
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", result.AccessToken);
         }
     }
