@@ -37,7 +37,7 @@ public class ApiHandler
         var app = PublicClientApplicationBuilder
             .Create(config.ClientId)
             .WithTenantId(config.TenantId)
-            .WithRedirectUri("https://login.microsoftonline.com/common/oauth2/nativeclient")
+            .WithRedirectUri("http://localhost")
             .Build();
 
         tokenCache.CacheHelper.RegisterCache(app.UserTokenCache);
