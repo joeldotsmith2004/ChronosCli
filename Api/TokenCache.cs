@@ -1,4 +1,3 @@
-using Microsoft.Identity.Client;
 using Microsoft.Identity.Client.Extensions.Msal;
 
 public class TokenCache

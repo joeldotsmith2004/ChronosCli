@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using Microsoft.Identity.Client;
 using System.Net;
 using System.Text.Json;
+using System.Runtime.InteropServices;
 
 public class ApiHandler
 {
@@ -37,10 +38,11 @@ public class ApiHandler
         var app = PublicClientApplicationBuilder
             .Create(config.ClientId)
             .WithTenantId(config.TenantId)
-            .WithRedirectUri("https://login.microsoftonline.com/common/oauth2/nativeclient")
+            .WithRedirectUri($"https://login.microsoftonline.com/{config.TenantId}/oauth2/nativeclient")
             .Build();
 
-        tokenCache.CacheHelper.RegisterCache(app.UserTokenCache);
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) SecureMsalTokenCacheFile.RegisterTokenCache(app.UserTokenCache);
+        else tokenCache.CacheHelper.RegisterCache(app.UserTokenCache);
         return new ApiHandler(client, config, tokenCache, app);
     }
 
