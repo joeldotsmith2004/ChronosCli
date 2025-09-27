@@ -18,6 +18,7 @@ cd ChronosCli
 
 # Build and install globally
 dotnet clean
+dotnet restore
 dotnet build
 dotnet pack
 dotnet tool install --global --add-source ./nupkg ChronosCli
