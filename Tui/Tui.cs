@@ -159,6 +159,7 @@ public class Tui : Window
             }
         });
 
+        statusBar.RefreshBar();
         if (IsFinishedLoading()) FinishedLoading();
     }
 
@@ -226,6 +227,7 @@ public class Tui : Window
                     }
                 }
 
+                statusBar.RefreshBar();
                 Application.Invoke(() =>
                 {
                     RemoveLoading(entries, entries.entriesTable);
@@ -258,6 +260,7 @@ public class Tui : Window
                     });
                 }
 
+                statusBar.RefreshBar();
                 Application.Invoke(() =>
                 {
                     RemoveLoading(entries, entries.entriesTable);
@@ -295,11 +298,14 @@ public class Tui : Window
                         }
                     }
                 }
+
+                statusBar.RefreshBar();
                 Application.Invoke(() =>
                 {
                     RemoveLoading(entries, entries.entriesTable);
                 });
             });
+
         }
     }
 
@@ -331,6 +337,7 @@ public class Tui : Window
                 RemoveLoading(entries, entries.entriesTable);
             });
 
+            statusBar.RefreshBar();
         });
     }
 

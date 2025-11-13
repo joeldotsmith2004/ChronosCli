@@ -1,8 +1,17 @@
 using Terminal.Gui;
 
+public enum Focused_View
+{
+    Entries,
+    Tasks
+}
+
 public class BottomBar : StatusBar
 {
     public Label infoLabel = null!;
+    public Label hourCount = null!;
+
+    public Focused_View CurrentFocused = Focused_View.Entries;
 
     public List<Label> entryItems = new List<Label>();
     public List<Label> taskItems = new List<Label>();
@@ -15,6 +24,10 @@ public class BottomBar : StatusBar
 
         // default items
         infoLabel = new Label() { Text = "No Information" };
+        hourCount = new Label() { Text = "0" };
+
+        SetHourCount();
+
 
         // task specfic
         taskItems.Add(new Label() { Text = "Add (a)" });
@@ -25,6 +38,28 @@ public class BottomBar : StatusBar
         entryItems.Add(new Label() { Text = "Filter (f)" });
 
         this.Add(infoLabel);
+    }
+
+    public void RefreshBar()
+    {
+        switch (CurrentFocused)
+        {
+            case Focused_View.Entries:
+                SelectEntries();
+                break;
+            case Focused_View.Tasks:
+                SelectTasks();
+                break;
+        }
+    }
+
+    public void SetHourCount()
+    {
+        var total = 0.0;
+        Store.Instance.Entries.ForEach(x => total += x.Hours);
+        hourCount = new Label() { Text = total.ToString() };
+
+        SetNeedsDraw();
     }
 
     public void SelectEntries()
@@ -42,8 +77,9 @@ public class BottomBar : StatusBar
             x += entry.Text.GetColumns() + 2;
         }
 
+        SetHourCount();
         int rx = 0;
-        foreach (var r in new[] { infoLabel })
+        foreach (var r in new[] { hourCount, infoLabel })
         {
             r.X = rx;
             rightGroup.Add(r);
@@ -58,6 +94,7 @@ public class BottomBar : StatusBar
 
         Add(leftGroup, spacer, rightGroup);
         SetNeedsDraw();
+        CurrentFocused = Focused_View.Entries;
     }
 
 
@@ -77,7 +114,10 @@ public class BottomBar : StatusBar
         }
 
         int rx = 0;
-        foreach (var r in new[] { infoLabel })
+
+        SetHourCount();
+
+        foreach (var r in new[] { hourCount, infoLabel })
         {
             r.X = rx;
             rightGroup.Add(r);
@@ -92,5 +132,6 @@ public class BottomBar : StatusBar
 
         Add(leftGroup, spacer, rightGroup);
         SetNeedsDraw();
+        CurrentFocused = Focused_View.Tasks;
     }
 }
